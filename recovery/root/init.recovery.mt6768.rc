@@ -1,64 +1,43 @@
-import /microtrust.rc
+import /init.recovery.teei_daemon.rc
 
-on early-init
-    start adbd
-
-on property:ro.crypto.state=encrypted && property:ro.crypto.type=file
-    install_keyring
+on init
+    # Create a more standard /dev/block layout for our scripts
+    symlink /dev/block/platform/bootdevice /dev/block/bootdevice
+    mkdir /mnt/vendor/persist 0700 root root
+    mount ext4 /dev/block/platform/bootdevice/by-name/persist /mnt/vendor/persist
+    export LD_LIBRARY_PATH /system/lib64:/vendor/lib64:/vendor/lib64/hw
 
 on fs
-    start hwservicemanager
-    start servicemanager
+    install_keyring
 
-service hwservicemanager /system/bin/hwservicemanager
+on post-fs
+    start boot-hal-1-1
+
+on boot
+    start health-hal-2-1
+    start vendor.vibrator-default
+    setprop sys.usb.config adb
+
+on property:vendor.sys.listeners.registered=true
+    start keymaster-4-0
+    start gatekeeper-1-0
+
+service keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service.beanpod
     user root
-    group root readproc
+    group root drmrpc
     disabled
-    onrestart setprop hwservicemanager.ready false
     seclabel u:r:recovery:s0
 
-service servicemanager /system/bin/servicemanager
-    user root
-    group root readproc
-    disabled
-    seclabel u:r:recovery:s0
-
-service gatekeeper-1-0 /vendor/bin/android.hardware.gatekeeper@1.0-service
+service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
     interface android.hardware.gatekeeper@1.0::IGatekeeper default
     user root
     group root
     disabled
     seclabel u:r:recovery:s0
 
-service keymaster-4-1-beanpod /vendor/bin/android.hardware.keymaster@4.1-service.beanpod
-    interface android.hardware.keymaster@4.0::IKeymasterDevice default
-    interface android.hardware.keymaster@4.1::IKeymasterDevice default
+service vendor.vibrator-default /vendor/bin/hw/android.hardware.vibrator-service.mediatek
+    class hal
     user root
-    group root drmrpc
+    group root
     disabled
     seclabel u:r:recovery:s0
-
-on property:crypto.ready=true
-    start vendor.keymaster-4-1-beanpod
-
-on property:hwservicemanager.ready=true
-    write /proc/bootprof "start teei_daemon (on fs)"
-    start teei_daemon
-    write /proc/bootprof "start teei_daemon end (on fs)"
-    start keymaster-4-1-beanpod
-    start gatekeeper-1-0
-
-on property:ro.crypto.state=unsupported
-    stop teei_daemon
-    stop keymaster-4-1-beanpod
-    stop gatekeeper-1-0
-
-on property:ro.crypto.state=unencrypted
-    stop teei_daemon
-    stop keymaster-4-1-beanpod
-    stop gatekeeper-1-0
-
-on property:twrp.decrypt.done=true
-    stop teei_daemon
-    stop keymaster-4-1-beanpod
-    stop gatekeeper-1-0
