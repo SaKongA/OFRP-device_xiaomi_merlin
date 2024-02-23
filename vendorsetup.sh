@@ -62,7 +62,7 @@ export OF_STATUS_INDENT_RIGHT=90
 # 禁止禁用导航栏
 export OF_ALLOW_DISABLE_NAVBAR=0
 
-## 使刷机包兼容红米K30 Ultra
+## 使刷机包兼容红米10X 4G
 export TARGET_DEVICE_ALT="merlin"
 
 ## 添加橙狐特殊处理
