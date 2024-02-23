@@ -15,7 +15,7 @@ on post-fs
 
 on boot
     start health-hal-2-1
-    start vendor.vibrator-default
+    start vibrator-1-3
     setprop sys.usb.config adb
 
 on property:vendor.sys.listeners.registered=true
@@ -35,7 +35,7 @@ service gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
     disabled
     seclabel u:r:recovery:s0
 
-service vendor.vibrator-default /vendor/bin/hw/android.hardware.vibrator-service.mediatek
+service vibrator-1-3 /system/bin/hw/android.hardware.vibrator@1.3-service.mtk
     class hal
     user root
     group root

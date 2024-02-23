@@ -147,6 +147,3 @@ TW_EXCLUDE_APEX := true
 # Debug
 TWRP_INCLUDE_LOGCAT := true
 TARGET_USES_LOGD := true
-
-# Haptics
-TW_SUPPORT_INPUT_1_2_HAPTICS := true
