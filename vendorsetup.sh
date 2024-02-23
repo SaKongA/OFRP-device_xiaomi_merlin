@@ -13,7 +13,7 @@
 	echo -e "\x1b[96mmerlin: 开始添加OrangeFox Vars...\x1b[m"
 	## 构建信息
 	# 设置显示在关于页面里的维护人员名称
-	export OF_MAINTAINER=ZhcnPanda
+	export OF_MAINTAINER=ZhcnPanda,trdyun
 	# 设置版本号为日期
 	export FOX_VERSION=$(date +%y.%m.%d)
 	# 当你需要标记出这个recovery是一个特殊版本时使用
