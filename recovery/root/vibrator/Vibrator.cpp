@@ -16,6 +16,7 @@
 
 #define LOG_TAG "VibratorService"
 
+#include <fcntl.h>
 #include <log/log.h>
 #include "Vibrator.h"
 
